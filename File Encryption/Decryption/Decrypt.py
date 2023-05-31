@@ -15,7 +15,7 @@ folder_path_directory = os.path.join(script_directory, "Decryption", "File Paths
 key_directory = os.path.join(script_directory, "Decryption", "Keys")
 
 def get_key_path(i):
-    key_path = os.path.join(script_directory, "Decryption", "Keys", f"thekey{i}.key")
+    key_path = os.path.join(key_directory, f"thekey{i}.key")
     return key_path
 
 def decrypt_folder(folder_path, secret_key):
