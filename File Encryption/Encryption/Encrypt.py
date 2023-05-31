@@ -108,12 +108,10 @@ def main():
     cant_encrypt = os.path.normpath(os.path.normcase(directory).title())
     encrypt_protection = cant_encrypt[0].lower() + cant_encrypt[1:]
 
-    if encrypt_protection == script_directory or encrypt_protection.startswith(script_directory):
-        print(f"Path being encrypted: {encrypt_protection}")
-        print(f"Path not able to be encrypted: {script_directory[0].lower()}")
-        print(script_directory)
-        print(encrypt_protection == script_directory[0].lower())
-        print(encrypt_protection.startswith(script_directory[0].lower()))
+    # Prevents you from encrypting the script file or any of its children
+    if encrypt_protection.lower() == script_directory.lower() or encrypt_protection.lower().startswith(script_directory.lower()):
+        print(f"Path not able to be encrypted: {script_directory.lower()}")
+        print(f"Path being encrypted: {encrypt_protection.lower()}")
         input("Chosen directory is the same as the script directory or its child. You cannot encrypt this software")
         return
 
@@ -123,7 +121,7 @@ def main():
 
     # Run a test to check if the folder is already encrypted
     if is_folder_encrypted(directory):
-        input("Folder is already encrypted. Press enter to exit...")
+        input(f"Folder {directory} is already encrypted. \nPress enter to exit...")
         return
 
     # Function to encrypt the contents of a file
