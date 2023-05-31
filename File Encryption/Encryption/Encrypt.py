@@ -3,17 +3,28 @@ import importlib.util
 import re
 import random
 
+# Create dir "Keys" & "File Paths" if they do not already exist 
+def create_directory_if_not_exists(directory_path):
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+
 script_directory = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+key_files = os.path.join(script_directory, "File Encryption", "Decryption", "Keys")
+create_directory_if_not_exists(key_files)
+
+path_files = os.path.join(script_directory, "File Encryption", "Decryption", "File Paths")
+create_directory_if_not_exists(path_files)
 
 def get_key_path(i):
     # Generate the key file path based on the key number
-    key_path = os.path.join(script_directory, "File Encryption", "Decryption", "Keys", f"thekey{i}.key")
+    key_path = os.path.join(key_files, f"thekey{i}.key")
     return key_path
 
 
 def get_file_path(i):
     # Generate the file path for storing the encrypt file path
-    file_path = os.path.join(script_directory, "File Encryption", "Decryption", "File Paths", f"EncryptFilePath{i}.txt")
+    file_path = os.path.join(path_files, f"EncryptFilePath{i}.txt")
     return file_path
 
 
@@ -39,10 +50,9 @@ def extract_last_digits(filename):
 # Checks if the folder or any parent directory is already encrypted
 def is_folder_encrypted(directory):
     encrypted_paths = []
-    encrypt_files_dir = os.path.join(script_directory, "File Encryption", "Decryption", "File Paths")
-    encrypt_files = os.listdir(encrypt_files_dir)
+    encrypt_files = os.listdir(path_files)
     for encrypt_file in encrypt_files:
-        file_path = os.path.join(encrypt_files_dir, encrypt_file)
+        file_path = os.path.join(path_files, encrypt_file)
         with open(file_path, "r") as file_contents:
             encrypted_paths.append(file_contents.read())
 
@@ -93,11 +103,17 @@ def main():
     if not directory:
         root.destroy()
         return
+    
     # Prevent the user from encrypting the script and locking all the previously encrypted files 
-    encrypt_protection = os.path.normpath(os.path.normcase(directory).title())
-    encrypt_protection = encrypt_protection[0].lower() + encrypt_protection[1:]
+    cant_encrypt = os.path.normpath(os.path.normcase(directory).title())
+    encrypt_protection = cant_encrypt[0].lower() + cant_encrypt[1:]
 
-    if encrypt_protection == script_directory[0].lower() or encrypt_protection.startswith(script_directory[0].lower()):
+    if encrypt_protection == script_directory or encrypt_protection.startswith(script_directory):
+        print(f"Path being encrypted: {encrypt_protection}")
+        print(f"Path not able to be encrypted: {script_directory[0].lower()}")
+        print(script_directory)
+        print(encrypt_protection == script_directory[0].lower())
+        print(encrypt_protection.startswith(script_directory[0].lower()))
         input("Chosen directory is the same as the script directory or its child. You cannot encrypt this software")
         return
 
