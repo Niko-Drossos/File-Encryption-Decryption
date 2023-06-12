@@ -1,7 +1,22 @@
 import os
-import re
 import random
 import subprocess
+
+# Check if the cryptography module is installed
+try:
+    from cryptography.fernet import Fernet
+except ImportError:
+    subprocess.run(["pip", "install", "cryptography"])
+    from cryptography.fernet import Fernet
+
+# Check if tKinter is already installed
+try:
+    import tkinter as tk
+    from tkinter import filedialog
+except ImportError:
+    subprocess.run(["pip", "install", "tkinter"])
+    import tkinter as tk
+    from tkinter import filedialog
 
 # ------------------------------- Path Creation ------------------------------ #
 
@@ -45,26 +60,8 @@ def confirm_choice(directory):
         print("Invalid input try again")
         return confirm_choice(directory)
 
-# Extract the last digits from the filename
-def extract_last_digits(filename):
-    # Uses regex to find all the numbers at the end of the filename string
-    match = re.search(r"\d+", filename[::-1])
-    if match:
-        return int(match.group()[::-1])
-    return None
-
-
 # Checks if the folder or any parent directory is already encrypted
 def is_folder_encrypted(directory):
-    """
-    Check if the specified folder or any of its parent directories is already encrypted.
-
-    Args:
-        directory (str): The path to the directory to be checked for encryption.
-
-    Returns:
-        bool: True if the directory or any parent directory is already encrypted, False otherwise.
-    """
     encrypted_paths = []
     encrypt_files = os.listdir(path_files)
     for encrypt_file in encrypt_files:
@@ -73,55 +70,18 @@ def is_folder_encrypted(directory):
             encrypted_paths.append(file_contents.read())
 
     # Check if any parent or child directory of the given directory is already encrypted
+    directory = os.path.normcase(directory)
     for encrypted_path in encrypted_paths:
+        encrypted_path = os.path.normcase(encrypted_path)
         if directory.startswith(encrypted_path):
             return True
         elif encrypted_path.startswith(directory):
             return True
     return False
 
-# -------------------------------- Find Files -------------------------------- #
-
-# Find all the key files inside of the "Keys" directory
-def find_key_files():
-    """
-    Find all key files inside the specified keys_folder directory.
-
-    Args:
-        keys_folder (str): The path to the directory containing the key files.
-
-    Returns:
-        List[str]: A list of paths to the key files found in the keys_folder directory,
-                   matching the naming convention "theKey*.key".
-    """
-    keys = []
-    for root, dirs, files in os.walk(key_files):
-        for file in files:
-            # Check if the file starts with "theKey" and ends with ".key"
-            if file.startswith("theKey") and file.endswith(".key"):
-                keys.append(os.path.join(root, file))
-    return keys
-
 # ---------------------------------------------------------------------------- #
 
-
 def main():
-    # Check if the cryptography module is installed
-    try:
-        from cryptography.fernet import Fernet
-    except ImportError:
-        subprocess.run(["pip", "install", "cryptography"])
-        from cryptography.fernet import Fernet
-
-    # Check if tKinter is already installed
-    try:
-        import tkinter as tk
-        from tkinter import filedialog
-    except ImportError:
-        subprocess.run(["pip", "install", "tkinter"])
-        import tkinter as tk
-        from tkinter import filedialog
-
     # Generate a random number to append to key and file name to pair them up
     random_number = random.randint(100000, 999999)
     Key_Path = get_key_path(random_number)
@@ -213,17 +173,7 @@ def main():
     else:
         make_path(directory)
 
-    # Find key files and extract last digits
-    key_files = find_key_files()
-    for key_file in key_files:
-        last_digits = extract_last_digits(key_file)
-        if last_digits is not None:
-            encrypt_file_path = get_file_path(last_digits)
-        else:
-            print(f"Failed to extract last digits from: {key_file}")
-
     input("Press Enter to exit...")
-
 
 if __name__ == "__main__":
     main()
