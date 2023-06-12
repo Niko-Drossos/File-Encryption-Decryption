@@ -3,6 +3,8 @@ import re
 import random
 import subprocess
 
+# ------------------------------- Path Creation ------------------------------ #
+
 # Create dir "Keys" & "File Paths" if they do not already exist 
 def create_directory_if_not_exists(directory_path):
     if not os.path.exists(directory_path):
@@ -19,24 +21,16 @@ path_files = os.path.join(script_directory, "File Encryption", "Decryption", "Fi
 create_directory_if_not_exists(path_files)
 
 # Generate the key file name based on the random number
-def get_key_path(i):
-    key_path = os.path.join(key_files, f"theKey{i}.key")
+def get_key_path(random_number):
+    key_path = os.path.join(key_files, f"theKey{random_number}.key")
     return key_path
 
 # Generate the file name for storing the encrypt file path
-def get_file_path(i):
-    file_path = os.path.join(path_files, f"EncryptFilePath{i}.txt")
+def get_file_path(random_number):
+    file_path = os.path.join(path_files, f"EncryptFilePath{random_number}.txt")
     return file_path
 
-# Find all the key files inside of the "Keys" directory
-def find_key_files(keys_folder):
-    keys = []
-    for root, dirs, files in os.walk(keys_folder):
-        for file in files:
-            # Check if the file starts with "theKey" and ends with ".key"
-            if file.startswith("theKey") and file.endswith(".key"):
-                keys.append(os.path.join(root, file))
-    return keys
+# -------------------------- Tests Before Encryption ------------------------- #
 
 # Ask the user to confirm if it is the correct folder they want encrypted
 def confirm_choice(directory):
@@ -62,6 +56,15 @@ def extract_last_digits(filename):
 
 # Checks if the folder or any parent directory is already encrypted
 def is_folder_encrypted(directory):
+    """
+    Check if the specified folder or any of its parent directories is already encrypted.
+
+    Args:
+        directory (str): The path to the directory to be checked for encryption.
+
+    Returns:
+        bool: True if the directory or any parent directory is already encrypted, False otherwise.
+    """
     encrypted_paths = []
     encrypt_files = os.listdir(path_files)
     for encrypt_file in encrypt_files:
@@ -76,6 +79,30 @@ def is_folder_encrypted(directory):
         elif encrypted_path.startswith(directory):
             return True
     return False
+
+# -------------------------------- Find Files -------------------------------- #
+
+# Find all the key files inside of the "Keys" directory
+def find_key_files():
+    """
+    Find all key files inside the specified keys_folder directory.
+
+    Args:
+        keys_folder (str): The path to the directory containing the key files.
+
+    Returns:
+        List[str]: A list of paths to the key files found in the keys_folder directory,
+                   matching the naming convention "theKey*.key".
+    """
+    keys = []
+    for root, dirs, files in os.walk(key_files):
+        for file in files:
+            # Check if the file starts with "theKey" and ends with ".key"
+            if file.startswith("theKey") and file.endswith(".key"):
+                keys.append(os.path.join(root, file))
+    return keys
+
+# ---------------------------------------------------------------------------- #
 
 
 def main():
@@ -96,9 +123,9 @@ def main():
         from tkinter import filedialog
 
     # Generate a random number to append to key and file name to pair them up
-    i = random.randint(100000, 999999)
-    Key_Path = get_key_path(i)
-    File_Path = get_file_path(i)
+    random_number = random.randint(100000, 999999)
+    Key_Path = get_key_path(random_number)
+    File_Path = get_file_path(random_number)
 
     # Get the current user's profile directory based on the operating system
     profile_directory = os.path.expanduser("~")
@@ -116,6 +143,7 @@ def main():
     # Make the directory path look cleaner 
     directory = os.path.normpath(directory)
 
+    # Make sure they want to encrypt that folder, if not then return
     if not confirm_choice(directory):
         return
 
@@ -160,7 +188,7 @@ def main():
 
     # Function to handle path creation and encryption
     def make_path(directory):
-        nonlocal i
+        nonlocal random_number
         if os.path.isdir(directory):
             key = Fernet.generate_key()
 
@@ -176,17 +204,17 @@ def main():
         else:
             print(f"The path '{directory}' is not a directory.")
             input("Try Again")
-            make_path(directory)
+            main()
 
-    # Check if the key file exists and if it does, generate a new "i" value
+    # Check if the key file exists and if it does, generate a new "random_number" value
     if os.path.exists(Key_Path):
-        i = random.randint(100000, 999999)
+        random_number = random.randint(100000, 999999)
         make_path(directory)
     else:
         make_path(directory)
 
     # Find key files and extract last digits
-    key_files = find_key_files(os.path.dirname(Key_Path))
+    key_files = find_key_files()
     for key_file in key_files:
         last_digits = extract_last_digits(key_file)
         if last_digits is not None:
