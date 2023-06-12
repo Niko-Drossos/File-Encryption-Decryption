@@ -17,11 +17,6 @@ script_directory = os.path.dirname(os.path.dirname(__file__))
 folder_path_directory = os.path.join(script_directory, "Decryption", "File Paths")
 key_directory = os.path.join(script_directory, "Decryption", "Keys")
 
-# Set key file paths
-def get_key_path(i):
-    key_path = os.path.join(key_directory, f"theKey{i}.key")
-    return key_path
-
 # --------------------------- Select File From List -------------------------- #
 
 # Ask for input on file to decrypt
@@ -99,8 +94,8 @@ def main():
             with open(file_path, "r") as file_contents:
                 paths.append(file_contents.read())
 
-    count = 0
     # List all files available for decryption
+    count = 0
     print("Available files for decryption:")
     print("--------------------------------------------------------------")
     for index, item in enumerate(paths):
@@ -111,7 +106,7 @@ def main():
     choice = select_path(count)
     if not choice:
         return
-    
+
     file_choice = available_files[choice - 1]
     file_choice_path = os.path.join(folder_path_directory, file_choice)
 
