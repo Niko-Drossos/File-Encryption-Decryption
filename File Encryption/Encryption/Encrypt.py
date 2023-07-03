@@ -112,7 +112,10 @@ def main():
     encrypt_protection = cant_encrypt[0].lower() + cant_encrypt[1:]
 
     # Prevents you from encrypting the script file or any of its children
-    if encrypt_protection.lower() == script_directory.lower() or encrypt_protection.lower().startswith(script_directory.lower()):
+    if encrypt_protection.lower() == script_directory.lower() or \
+        encrypt_protection.lower().startswith(script_directory.lower()) or \
+        script_directory.lower().startswith(encrypt_protection.lower()):
+            
         print(f"Path not able to be encrypted: {script_directory.lower()}")
         print(f"Path being encrypted: {encrypt_protection.lower()}")
         input("Chosen directory is the same as the script directory or its child. You cannot encrypt this software")
