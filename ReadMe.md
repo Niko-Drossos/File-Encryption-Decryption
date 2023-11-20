@@ -4,7 +4,8 @@
 
 ## Installation
 
-Before you use the script, you will need to install Python on the host machine, just click on `Download Python.bat` and it will take you to the python download page. The first time you run `Encrypt.py`, it will start installing `cryptography.Fernet` and `tkinter`. Just run the script a second time after it finishes installing for it to work.
+Before you use the script, you will need to install Python on the host machine, just click on `Download Python.bat` and it will take you to the python download page. 
+The first time you run `Encrypt.py`, it will start installing `cryptography.Fernet` and `tkinter`. Just run the script a second time after it finishes installing for it to work.
 
 ## !!WARNING!!
 
@@ -49,6 +50,6 @@ Program designed by Niko Drossos
 
 If you have any ideas or suggestions, please feel free to reach out to me!
 
-## Redistribution
+## Liability 
 
-Do not redistribute this software without the consent of the seller. By using this software, you assume all liabilities. I am not responsible for the loss of files.
+By using this open sorce software, you assume all liabilities. I am not responsible for the loss or corruption of files.
